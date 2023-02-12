@@ -17,31 +17,38 @@ export default class Field {
     for (let i = 0; i < this.rowCount; i++) {
       const row = this.createRow();
 
+      this.appendRowToField(row);
       this.field.push([]);
 
       for (let j = 0; j < this.columnCount; j++) {
-        const cellElement = this.createCell(row);
+        const cell = this.createCell();
 
-        this.field[i].push(new Cell(cellElement));
+        this.appendCellToRow(cell, row);
+        this.field[i].push(new Cell(cell));
       }
     }
   }
 
   createRow() {
+    return this.createDivWithClassName('row');
+  }
+
+  createDivWithClassName(className) {
     const div = document.createElement('div');
 
-    div.className = 'row';
-    this.fieldElement.append(div);
-
+    div.className = className;
     return div;
   }
 
-  createCell(element) {
-    const div = document.createElement('div');
+  appendRowToField(row) {
+    this.fieldElement.append(row);
+  }
 
-    div.className = 'cell';
-    element.append(div);
+  createCell() {
+    return this.createDivWithClassName('cell');
+  }
 
-    return div;
+  appendCellToRow(cell, row) {
+    row.append(cell);
   }
 }
