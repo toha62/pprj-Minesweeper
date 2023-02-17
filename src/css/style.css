@@ -13,13 +13,18 @@ justify-content: center;
 }
 
 .row {
-  display: flex;
+  display: flex; 
 }
 
 .cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   box-sizing: border-box;
   width: 40px;
   height: 40px;
+  margin: auto;
   border: 1px solid #696363;
   background-color: darkgray;
   box-shadow: inset -3px -3px 4px rgba(70, 70, 70, 0.4), 
