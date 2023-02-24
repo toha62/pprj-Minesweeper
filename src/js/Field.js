@@ -1,9 +1,7 @@
-/* eslint-disable no-return-assign */
-/* eslint-disable arrow-parens */
+/* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable class-methods-use-this */
-/* eslint-disable import/extensions */
-import Cell from './Cell.js';
+import Cell from './Cell';
 
 export default class Field {
   constructor(fieldElement, rowCount, columnCount, mineCount) {
@@ -82,6 +80,7 @@ export default class Field {
         }
         const countOfMine = this.getCountOfMine(row, column);
         if (countOfMine) {
+          this.field[row][column].content = countOfMine;
           this.renderCountOfMine(row, column, countOfMine);
         }
       }
@@ -105,7 +104,8 @@ export default class Field {
     if ((row + 1) < this.rowCount && (column - 1) >= 0 && this.field[row + 1][column - 1].mine) {
       counter++;
     }
-    if ((row + 1) < this.rowCount && (column + 1) < this.columnCount && this.field[row + 1][column + 1].mine) {
+    if ((row + 1) < this.rowCount && (column + 1) < this.columnCount
+        && this.field[row + 1][column + 1].mine) {
       counter++;
     }
     if ((column - 1) >= 0 && this.field[row][column - 1].mine) {
@@ -135,10 +135,15 @@ export default class Field {
   }
 
   renderFreeSpaceAtPosition(row, column) {
-    this.field[row][column].element.innerHTML = '<div>O</div>';
+    this.field[row][column].style.backgroundColor = 'white';
   }
 
   renderCountOfMine(row, column, count) {
-    this.field[row][column].element.innerHTML = `<div>${count}</div>`;
+    const newElement = this.createDivWithClassName(`cell__content_${count}`);
+
+    newElement.innerText = count;
+
+    this.field[row][column].element.append(newElement);
+    // this.field[row][column].element.innerHTML = `<div>${count}</div>`;
   }
 }

@@ -10,6 +10,22 @@
       "error",
       "LabeledStatement",
       "WithStatement"
+    ],
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "class-methods-use-this": [
+      "error",
+      { "enforceForClassFields": false }
+    ],
+    "no-underscore-dangle": [
+      "error", 
+      { "allowAfterThis": true }
+    ],
+    "no-plusplus": [
+      "error",
+      { "allowForLoopAfterthoughts": true }
     ]
   }
 }

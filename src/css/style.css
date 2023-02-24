@@ -3,8 +3,8 @@ body {
 }
 
 .container {
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
 
 }
 
@@ -25,10 +25,48 @@ justify-content: center;
   width: 40px;
   height: 40px;
   margin: auto;
+
+  font-size: 18px;
+  font-weight: bold;
+
   border: 1px solid #696363;
   background-color: darkgray;
   box-shadow: inset -3px -3px 4px rgba(70, 70, 70, 0.4), 
            inset 3px 3px 4px rgba(255, 255, 255, 0.4);
+
+  cursor: context-menu;
+}
+
+.cell__content_1 {
+  color: blue;
+}
+
+.cell__content_2 {
+  color: green;
+}
+
+.cell__content_3 {
+  color: red;
+}
+
+.cell__content_4 {
+  color: rgb(1, 1, 86);
+}
+
+.cell__content_5 {
+  color: rgb(72, 13, 13);
+}
+
+.cell__content_6 {
+  color: rgb(0, 102, 86);
+}
+
+.cell__content_7 {
+  color: black;
+}
+
+.cell__content_8 {
+  color: rgb(147, 147, 1);
 }
 
 .cell_clicked {

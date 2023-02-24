@@ -5,5 +5,6 @@ export default class Cell {
     this.column = column;
     this.state = 'closed';
     this.mine = false;
+    this.content = '';
   }
 }
