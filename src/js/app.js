@@ -25,7 +25,7 @@ import Field from './Field.js';
 //   getCell(x, y).classList.add('cell_clicked');
 // }
 
-const field = new Field(document.querySelector('.field'), 5, 6, 10);
+const field = new Field(document.querySelector('.field'), 7, 10, 10);
 console.log(field);
 // console.log(getCell(3, 0));
 // setCellSelected(3, 0);

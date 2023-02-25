@@ -19,13 +19,17 @@
       "error",
       { "enforceForClassFields": false }
     ],
+    "no-plusplus": [
+      "error",
+      { "allowForLoopAfterthoughts": true }
+    ],
     "no-underscore-dangle": [
       "error", 
       { "allowAfterThis": true }
     ],
-    "no-plusplus": [
+    "no-param-reassign": [
       "error",
-      { "allowForLoopAfterthoughts": true }
+      { "props": true, "ignorePropertyModificationsFor": ["cell"] }
     ]
   }
 }

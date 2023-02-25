@@ -7,4 +7,25 @@ export default class Cell {
     this.mine = false;
     this.content = '';
   }
+
+  open() {
+    if (this.state === 'open') {
+      return;
+    }
+
+    this.state = 'open';
+    this.element.classList.add('cell_clicked');
+
+    if (this.mine) {
+      this.element.innerHTML = '<div>X</div>';
+      return;
+    }
+
+    if (!this.content) {
+      this.element.innerHTML = '<div></div>';
+      return;
+    }
+
+    this.element.innerHTML = `<div class="cell__content_${this.content}">${this.content}</div>`;
+  }
 }

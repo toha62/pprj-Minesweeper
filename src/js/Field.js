@@ -16,8 +16,30 @@ export default class Field {
 
     this.createField();
     this.fillFieldWithMines();
+    this.registerEventHandlers();
     this.renderMine(); // Test methods !!!
     this.fillFieldWithNumbers(); // Test methods !!!
+  }
+
+  registerEventHandlers() {
+    this.fieldElement.addEventListener('mousedown', eventTarget => {
+      const cellElement = eventTarget.target.closest('.cell');
+
+      cellElement.classList.add('cell_clicked');
+    });
+
+    this.fieldElement.addEventListener('mouseup', eventTarget => {
+      const cellElement = eventTarget.target.closest('.cell');
+      const { row, column } = cellElement.dataset;
+
+      this.field[row][column].open();
+      if (this.field[row][column].mine) {
+        return null;
+      }
+      if (!this.field[row][column].content) {
+        this.openFreeSpaces(+row, +column);
+      }
+    });
   }
 
   createField() {
@@ -28,10 +50,10 @@ export default class Field {
       this.field.push([]);
 
       for (let column = 0; column < this.columnCount; column++) {
-        const cellElement = this.createCellElement();
+        const cellElement = this.createCellElement(row, column);
 
         this.appendCellToRow(cellElement, rowElement);
-        this.field[row].push(new Cell(cellElement, row, column));
+        this.field[row].push(new Cell(cellElement));
       }
     }
   }
@@ -40,8 +62,13 @@ export default class Field {
     return this.createDivWithClassName('row');
   }
 
-  createCellElement() {
-    return this.createDivWithClassName('cell');
+  createCellElement(row, column) {
+    const cellElement = this.createDivWithClassName('cell');
+
+    cellElement.dataset.row = row;
+    cellElement.dataset.column = column;
+
+    return cellElement;
   }
 
   createDivWithClassName(className) {
@@ -65,6 +92,7 @@ export default class Field {
     while (counter < this.mineCount) {
       const row = Math.floor(Math.random() * this.rowCount);
       const column = Math.floor(Math.random() * this.columnCount);
+
       if (!this.field[row][column].mine) {
         this.field[row][column].mine = true;
         counter++;
@@ -79,9 +107,11 @@ export default class Field {
           continue;
         }
         const countOfMine = this.getCountOfMine(row, column);
+
         if (countOfMine) {
           this.field[row][column].content = countOfMine;
           this.renderCountOfMine(row, column, countOfMine);
+          // this.field[row][column].open();
         }
       }
     }
@@ -89,54 +119,72 @@ export default class Field {
 
   getCountOfMine(row, column) {
     let counter = 0;
-    if ((row - 1) >= 0 && this.field[row - 1][column].mine) {
-      counter++;
-    }
-    if ((row - 1) >= 0 && (column - 1) >= 0 && this.field[row - 1][column - 1].mine) {
-      counter++;
-    }
-    if ((row - 1) >= 0 && (column + 1) < this.columnCount && this.field[row - 1][column + 1].mine) {
-      counter++;
-    }
-    if ((row + 1) < this.rowCount && this.field[row + 1][column].mine) {
-      counter++;
-    }
-    if ((row + 1) < this.rowCount && (column - 1) >= 0 && this.field[row + 1][column - 1].mine) {
-      counter++;
-    }
-    if ((row + 1) < this.rowCount && (column + 1) < this.columnCount
-        && this.field[row + 1][column + 1].mine) {
-      counter++;
-    }
-    if ((column - 1) >= 0 && this.field[row][column - 1].mine) {
-      counter++;
-    }
-    if ((column + 1) < this.columnCount && this.field[row][column + 1].mine) {
-      counter++;
+    for (let y = row - 1; y < row + 2; y++) {
+      for (let x = column - 1; x < column + 2; x++) {
+        if ((y === row && x === column) || !this.isValidRowColumn(y, x)) {
+          continue;
+        }
+        if (this.field[y][x].mine) {
+          counter++;
+        }
+      }
     }
     return counter;
   }
 
+  isValidRowColumn(row, column) {
+    if (row < 0 || column < 0 || row >= this.rowCount || column >= this.columnCount) {
+      return false;
+    }
+    return true;
+  }
+
   openFreeSpaces(row, column) {
-    this.renderFreeSpaceAtPosition(row, column);
+    // if (this.field[row][column].content) {
+    //   this.field[row][column].open();
+    //   return null;
+    // }
+    for (let y = row - 1; y < (row + 2); y++) {
+      for (let x = column - 1; x < (column + 2); x++) {
+        if ((y === row && x === column) || !this.isValidRowColumn(y, x) || this.field[y][x].state === 'open') {
+          continue;
+        }
+
+        if (!this.field[y][x].content) {
+          this.field[y][x].open();
+          this.openFreeSpaces(y, x);
+        }
+        if (this.field[y][x].content) {
+          this.field[y][x].open();
+        }
+      }
+    }
   }
 
   // Test methods !!!
   renderMine() {
     for (const row of this.field) {
-      row.map(cell => cell.mine && (cell.element.innerHTML = '<div>X</div>'));
+      row.map(cell => {
+        if (cell.mine) {
+          cell.element.innerHTML = '<div>X</div>';
+        }
+      });
     }
   }
 
-  renderFreeSpace() {
-    for (const row of this.field) {
-      row.map(cell => cell.mine || (cell.element.innerHTML = '<div>O</div>'));
-    }
-  }
+  // renderFreeSpace() {
+  //   for (const row of this.field) {
+  //     row.map(cell => {
+  //       if (!cell.mine) {
+  //         cell.element.innerHTML = '<div>O</div>';
+  //       }
+  //     });
+  //   }
+  // }
 
-  renderFreeSpaceAtPosition(row, column) {
-    this.field[row][column].style.backgroundColor = 'white';
-  }
+  // renderFreeSpaceAtPosition(row, column) {
+  //   this.field[row][column].style.backgroundColor = 'white';
+  // }
 
   renderCountOfMine(row, column, count) {
     const newElement = this.createDivWithClassName(`cell__content_${count}`);
@@ -144,6 +192,5 @@ export default class Field {
     newElement.innerText = count;
 
     this.field[row][column].element.append(newElement);
-    // this.field[row][column].element.innerHTML = `<div>${count}</div>`;
   }
 }
