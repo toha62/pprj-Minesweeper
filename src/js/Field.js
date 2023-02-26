@@ -1,7 +1,9 @@
+/* eslint-disable no-new */
 /* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable class-methods-use-this */
 import Cell from './Cell';
+import MouseClickHandler from './MouseClickHandler';
 
 export default class Field {
   constructor(fieldElement, rowCount, columnCount, mineCount) {
@@ -22,24 +24,46 @@ export default class Field {
   }
 
   registerEventHandlers() {
-    this.fieldElement.addEventListener('mousedown', eventTarget => {
-      const cellElement = eventTarget.target.closest('.cell');
+    new MouseClickHandler(
+      this.fieldElement,
+      this.leftClickCallback.bind(this),
+      this.rightClickCallback.bind(this),
+      this.bothClickDownCallback.bind(this),
+      this.bothClickUpCallback.bind(this),
+    );
+  }
 
-      cellElement.classList.add('cell_clicked');
-    });
+  leftClickCallback(target) {
+    const cellElement = target.closest('.cell');
+    const row = +cellElement.dataset.row;
+    const column = +cellElement.dataset.column;
 
-    this.fieldElement.addEventListener('mouseup', eventTarget => {
-      const cellElement = eventTarget.target.closest('.cell');
-      const { row, column } = cellElement.dataset;
+    cellElement.classList.add('cell_clicked');
 
-      this.field[row][column].open();
-      if (this.field[row][column].mine) {
-        return null;
-      }
-      if (!this.field[row][column].content) {
-        this.openFreeSpaces(+row, +column);
-      }
-    });
+    this.field[row][column].open();
+
+    // if (this.field[row][column].mine) {
+    //   return null;
+    // }
+    if (!this.field[row][column].content) {
+      this.openFreeSpaces(+row, +column);
+    }
+  }
+
+  rightClickCallback(target) {
+    const cellElement = target.closest('.cell');
+    const row = +cellElement.dataset.row;
+    const column = +cellElement.dataset.column;
+
+    this.field[row][column].setMineFlag();
+  }
+
+  bothClickDownCallback(target) {
+    const cellElement = target.closest('.cell');
+  }
+
+  bothClickUpCallback(target) {
+    const cellElement = target.closest('.cell');
   }
 
   createField() {

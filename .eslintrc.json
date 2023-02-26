@@ -19,6 +19,10 @@
       "error",
       { "enforceForClassFields": false }
     ],
+    "max-len": [
+      "error",
+      {"code": 120}
+    ],
     "no-plusplus": [
       "error",
       { "allowForLoopAfterthoughts": true }

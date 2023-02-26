@@ -28,4 +28,11 @@ export default class Cell {
 
     this.element.innerHTML = `<div class="cell__content_${this.content}">${this.content}</div>`;
   }
+
+  setMineFlag() {
+    if (this.state === 'open') {
+      return;
+    }
+    this.element.innerHTML = '<div>Q</div>';
+  }
 }
