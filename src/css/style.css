@@ -37,6 +37,20 @@ body {
   cursor: context-menu;
 }
 
+.mine_label {
+  width: 35px;
+  height: 35px;
+
+  background-image: url(/src/svg/mine-label.svg);
+  background-repeat: no-repeat;
+  background-position: top 1px left 1px;
+  background-size: 37px;
+}
+
+.cell__content_hidden {
+  opacity: 0.3;
+}
+
 .cell__content_1 {
   color: blue;
 }

@@ -52,10 +52,13 @@ export default class Field {
 
   rightClickCallback(target) {
     const cellElement = target.closest('.cell');
-    const row = +cellElement.dataset.row;
-    const column = +cellElement.dataset.column;
+    // const row = +cellElement.dataset.row;
+    // const column = +cellElement.dataset.column;
 
-    this.field[row][column].setMineFlag();
+    // this.field[row][column].setMineFlag();
+    const mineElement = cellElement.firstChild;
+
+    mineElement.classList.toggle('mine_label');
   }
 
   bothClickDownCallback(target) {
@@ -88,6 +91,9 @@ export default class Field {
 
   createCellElement(row, column) {
     const cellElement = this.createDivWithClassName('cell');
+    const contentElement = document.createElement('div');
+
+    cellElement.append(contentElement);
 
     cellElement.dataset.row = row;
     cellElement.dataset.column = column;
@@ -134,7 +140,7 @@ export default class Field {
 
         if (countOfMine) {
           this.field[row][column].content = countOfMine;
-          this.renderCountOfMine(row, column, countOfMine);
+          this.renderCountOfMine(row, column, countOfMine); // temporary method
           // this.field[row][column].open();
         }
       }
@@ -170,7 +176,7 @@ export default class Field {
     // }
     for (let y = row - 1; y < (row + 2); y++) {
       for (let x = column - 1; x < (column + 2); x++) {
-        if ((y === row && x === column) || !this.isValidRowColumn(y, x) || this.field[y][x].state === 'open') {
+        if ((y === row && x === column) || !this.isValidRowColumn(y, x) || this.field[y][x].isOpen) {
           continue;
         }
 
@@ -190,31 +196,20 @@ export default class Field {
     for (const row of this.field) {
       row.map(cell => {
         if (cell.mine) {
-          cell.element.innerHTML = '<div>X</div>';
+          const mineElement = cell.element.firstChild;
+
+          mineElement.textContent = 'X';
+          mineElement.classList.add('cell__content_hidden');
         }
       });
     }
   }
 
-  // renderFreeSpace() {
-  //   for (const row of this.field) {
-  //     row.map(cell => {
-  //       if (!cell.mine) {
-  //         cell.element.innerHTML = '<div>O</div>';
-  //       }
-  //     });
-  //   }
-  // }
-
-  // renderFreeSpaceAtPosition(row, column) {
-  //   this.field[row][column].style.backgroundColor = 'white';
-  // }
-
   renderCountOfMine(row, column, count) {
-    const newElement = this.createDivWithClassName(`cell__content_${count}`);
+    const contentElement = this.field[row][column].element.firstChild;
 
-    newElement.innerText = count;
-
-    this.field[row][column].element.append(newElement);
+    contentElement.textContent = count;
+    contentElement.classList.add(`cell__content_${count}`);
+    contentElement.classList.add('cell__content_hidden');
   }
 }
