@@ -8,26 +8,27 @@ export default class Cell {
     this.content = '';
   }
 
-  open() {
-    if (this.isOpen) {
+  static open(element) {
+    if (element.matches('.cell_open')) {
       return;
     }
 
-    this.isOpen = true;
-    this.element.classList.add('cell_clicked');
-    this.element.firstChild.classList.remove('cell__content_hidden');
+    const { content } = element.dataset;
 
-    if (this.mine) {
-      this.element.innerHTML = '<div>X</div>';
+    element.classList.add('cell_open');
+    element.firstChild.classList.remove('cell__content_hidden');
+
+    if (content === 'mine') {
+      element.innerHTML = '<div>X</div>';
       return;
     }
 
-    if (!this.content) {
-      this.element.innerHTML = '<div></div>';
-      return;
-    }
+    // if (!content) {
+    //   element.innerHTML = '<div></div>';
+    //   return;
+    // }
 
-    this.element.innerHTML = `<div class="cell__content_${this.content}">${this.content}</div>`;
+    // element.innerHTML = `<div class="cell__content_${content}">${content}</div>`;
   }
 
   setMineFlag() {

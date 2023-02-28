@@ -11,7 +11,7 @@ export default class Field {
     this.rowCount = rowCount;
     this.columnCount = columnCount;
     this.mineCount = mineCount;
-    this.field = [];
+    this.fieldArr = [];
 
     // To be get from outer
     //
@@ -33,6 +33,8 @@ export default class Field {
     );
   }
 
+  // Обработчики нажатия кнопок мыши
+
   leftClickCallback(target) {
     const cellElement = target.closest('.cell');
     const row = +cellElement.dataset.row;
@@ -40,12 +42,12 @@ export default class Field {
 
     cellElement.classList.add('cell_clicked');
 
-    this.field[row][column].open();
+    Cell.open(this.fieldArr[row][column]);
 
     // if (this.field[row][column].mine) {
     //   return null;
     // }
-    if (!this.field[row][column].content) {
+    if (!this.fieldArr[row][column].dataset.content) {
       this.openFreeSpaces(+row, +column);
     }
   }
@@ -69,18 +71,21 @@ export default class Field {
     const cellElement = target.closest('.cell');
   }
 
+  // Методы создания игрового поля
+  // создание элементов ячеек поля и сохранение их в массив
+
   createField() {
     for (let row = 0; row < this.rowCount; row++) {
       const rowElement = this.createRowElement();
 
       this.appendRowToField(rowElement);
-      this.field.push([]);
+      this.appendRowToFieldArray();
 
       for (let column = 0; column < this.columnCount; column++) {
         const cellElement = this.createCellElement(row, column);
 
         this.appendCellToRow(cellElement, rowElement);
-        this.field[row].push(new Cell(cellElement));
+        this.appendCellToFieldArray(cellElement, row);
       }
     }
   }
@@ -91,14 +96,19 @@ export default class Field {
 
   createCellElement(row, column) {
     const cellElement = this.createDivWithClassName('cell');
-    const contentElement = document.createElement('div');
+    const contentElement = this.createContentElement();
 
     cellElement.append(contentElement);
 
     cellElement.dataset.row = row;
     cellElement.dataset.column = column;
+    cellElement.dataset.content = '';
 
     return cellElement;
+  }
+
+  createContentElement() {
+    return this.createDivWithClassName('cell__content_hidden');
   }
 
   createDivWithClassName(className) {
@@ -106,6 +116,14 @@ export default class Field {
 
     div.className = className;
     return div;
+  }
+
+  appendRowToFieldArray() {
+    this.fieldArr.push([]);
+  }
+
+  appendCellToFieldArray(cell, row) {
+    this.fieldArr[row].push(cell);
   }
 
   appendRowToField(row) {
@@ -116,6 +134,8 @@ export default class Field {
     row.append(cell);
   }
 
+  // Метод заполнения поля минами
+
   fillFieldWithMines() {
     let counter = 0;
 
@@ -123,23 +143,25 @@ export default class Field {
       const row = Math.floor(Math.random() * this.rowCount);
       const column = Math.floor(Math.random() * this.columnCount);
 
-      if (!this.field[row][column].mine) {
-        this.field[row][column].mine = true;
+      if (!this.fieldArr[row][column].dataset.content) {
+        this.fieldArr[row][column].dataset.content = 'mine';
         counter++;
       }
     }
   }
 
+  // Метод заполнения поля числами, указывающими количество мин вокруг ячейки
+
   fillFieldWithNumbers() {
     for (let row = 0; row < this.rowCount; row++) {
       for (let column = 0; column < this.columnCount; column++) {
-        if (this.field[row][column].mine) {
+        if (this.fieldArr[row][column].dataset.content === 'mine') {
           continue;
         }
         const countOfMine = this.getCountOfMine(row, column);
 
         if (countOfMine) {
-          this.field[row][column].content = countOfMine;
+          this.fieldArr[row][column].dataset.content = countOfMine;
           this.renderCountOfMine(row, column, countOfMine); // temporary method
           // this.field[row][column].open();
         }
@@ -154,7 +176,7 @@ export default class Field {
         if ((y === row && x === column) || !this.isValidRowColumn(y, x)) {
           continue;
         }
-        if (this.field[y][x].mine) {
+        if (this.fieldArr[y][x].dataset.content === 'mine') {
           counter++;
         }
       }
@@ -169,23 +191,32 @@ export default class Field {
     return true;
   }
 
+  // Метод открывает область пустых ячеек
+
   openFreeSpaces(row, column) {
     // if (this.field[row][column].content) {
     //   this.field[row][column].open();
     //   return null;
     // }
-    for (let y = row - 1; y < (row + 2); y++) {
-      for (let x = column - 1; x < (column + 2); x++) {
-        if ((y === row && x === column) || !this.isValidRowColumn(y, x) || this.field[y][x].isOpen) {
+    for (let y = row - 1; y < row + 2; y++) {
+      for (let x = column - 1; x < column + 2; x++) {
+        if ((y === row && x === column) || !this.isValidRowColumn(y, x)) {
           continue;
         }
 
-        if (!this.field[y][x].content) {
-          this.field[y][x].open();
+        const cellElement = this.fieldArr[y][x];
+        const { content } = cellElement.dataset;
+
+        if (content === 'mine' || cellElement.matches('.cell_open')) {
+          continue;
+        }
+
+        if (!content) {
+          Cell.open(cellElement);
           this.openFreeSpaces(y, x);
         }
-        if (this.field[y][x].content) {
-          this.field[y][x].open();
+        if (content) {
+          Cell.open(cellElement);
         }
       }
     }
@@ -193,10 +224,10 @@ export default class Field {
 
   // Test methods !!!
   renderMine() {
-    for (const row of this.field) {
+    for (const row of this.fieldArr) {
       row.map(cell => {
-        if (cell.mine) {
-          const mineElement = cell.element.firstChild;
+        if (cell.dataset.content === 'mine') {
+          const mineElement = cell.firstChild;
 
           mineElement.textContent = 'X';
           mineElement.classList.add('cell__content_hidden');
@@ -206,7 +237,7 @@ export default class Field {
   }
 
   renderCountOfMine(row, column, count) {
-    const contentElement = this.field[row][column].element.firstChild;
+    const contentElement = this.fieldArr[row][column].firstChild;
 
     contentElement.textContent = count;
     contentElement.classList.add(`cell__content_${count}`);

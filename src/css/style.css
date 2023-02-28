@@ -37,6 +37,10 @@ body {
   cursor: context-menu;
 }
 
+.cell_open {
+  box-shadow: none;
+}
+
 .mine_label {
   width: 35px;
   height: 35px;
@@ -81,8 +85,4 @@ body {
 
 .cell__content_8 {
   color: rgb(147, 147, 1);
-}
-
-.cell_clicked {
-  box-shadow: none;
 }
