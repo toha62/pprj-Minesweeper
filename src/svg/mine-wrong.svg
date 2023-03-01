@@ -8,19 +8,22 @@ viewBox="0 0 200 200"
  <defs>
   <style type="text/css">
    <![CDATA[
-    .str1 {stroke:#2B2A29;stroke-width:2.65;stroke-miterlimit:22.9256}
+    .str1 {stroke:#2B2A29;stroke-width:7.06;stroke-miterlimit:22.9256}
+    .str2 {stroke:red;stroke-width:2.65;stroke-miterlimit:22.9256}
     .str0 {stroke:#2B2A29;stroke-width:0.5;stroke-miterlimit:22.9256}
-    .fil2 {fill:none}
+    .fil1 {fill:none}
+    .fil2 {fill:#FEFEFE}
     .fil0 {fill:#2A2829}
-    .fil1 {fill:red}
    ]]>
   </style>
  </defs>
  <g id="Слой_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <polygon class="fil0 str0" points="35.32,151.68 163.91,151.68 163.91,172.44 35.32,172.44 "/>
-  <path class="fil0 str0" d="M100.6 163.45c14.92,0 27.01,-4.8 27.01,-10.72 0,-5.92 -12.09,-10.71 -27.01,-10.71 -14.91,0 -27.01,4.79 -27.01,10.71 0,5.92 12.1,10.72 27.01,10.72z"/>
-  <polygon class="fil1 str0" points="100.36,77.04 100.35,126.55 35.05,80.28 100.37,27.53 "/>
-  <line class="fil2 str1" x1="100.37" y1="27.53" x2="100.37" y2= "147.29" />
+  <circle class="fil0 str0" cx="100.31" cy="99.96" r="62.5"/>
+  <line class="fil1 str1" x1="100.31" y1="12.46" x2="100.31" y2= "187.46" />
+  <line class="fil1 str1" x1="12.8" y1="99.96" x2="187.81" y2= "99.96" />
+  <line class="fil1 str2" x1="12.02" y1="187.99" x2="187.19" y2= "12.82" />
+  <ellipse class="fil2 str0" transform="matrix(1.00654 -1.00654 0.726952 0.726952 75.2967 75.7585)" rx="9.91" ry="10.5"/>
+  <line class="fil1 str2" x1="12.74" y1="12.39" x2="186.92" y2= "186.57" />
  </g>
 </svg>
