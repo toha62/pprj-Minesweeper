@@ -3,7 +3,6 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable class-methods-use-this */
 import Cell from './Cell';
-import MouseClickHandler from './MouseClickHandler';
 
 export default class Field {
   constructor(fieldElement, rowCount, columnCount, mineCount) {
@@ -11,64 +10,31 @@ export default class Field {
     this.rowCount = rowCount;
     this.columnCount = columnCount;
     this.mineCount = mineCount;
-    this.fieldArr = [];
 
-    // To be get from outer
-    //
+    this.start();
+  }
+
+  start() {
+    this.fieldArr = [];
 
     this.createField();
     this.fillFieldWithMines();
-    this.registerEventHandlers();
-    this.renderMine(); // Test methods !!!
+    console.log(this.fieldArr);
+    // this.renderMine(); // Test methods !!!
     this.fillFieldWithNumbers(); // Test methods !!!
   }
 
-  registerEventHandlers() {
-    new MouseClickHandler(
-      this.fieldElement,
-      this.leftClickCallback.bind(this),
-      this.rightClickCallback.bind(this),
-      this.bothClickDownCallback.bind(this),
-      this.bothClickUpCallback.bind(this),
-    );
+  restart() {
+    this.clearField();
+    this.start();
   }
 
-  // Обработчики нажатия кнопок мыши
+  clearField() {
+    const rowList = this.fieldElement.querySelectorAll('.row');
 
-  leftClickCallback(target) {
-    const cellElement = target.closest('.cell');
-    const row = +cellElement.dataset.row;
-    const column = +cellElement.dataset.column;
-
-    cellElement.classList.add('cell_clicked');
-
-    Cell.open(this.fieldArr[row][column]);
-
-    // if (this.field[row][column].mine) {
-    //   return null;
-    // }
-    if (!this.fieldArr[row][column].dataset.content) {
-      this.openFreeSpaces(+row, +column);
+    if (rowList) {
+      Array.from(rowList).map(element => element.remove());
     }
-  }
-
-  rightClickCallback(target) {
-    const cellElement = target.closest('.cell');
-    // const row = +cellElement.dataset.row;
-    // const column = +cellElement.dataset.column;
-
-    // this.field[row][column].setMineFlag();
-    const mineElement = cellElement.firstChild;
-
-    mineElement.classList.toggle('mine_label');
-  }
-
-  bothClickDownCallback(target) {
-    const cellElement = target.closest('.cell');
-  }
-
-  bothClickUpCallback(target) {
-    const cellElement = target.closest('.cell');
   }
 
   // Методы создания игрового поля
@@ -102,13 +68,12 @@ export default class Field {
 
     cellElement.dataset.row = row;
     cellElement.dataset.column = column;
-    cellElement.dataset.content = '';
 
     return cellElement;
   }
 
   createContentElement() {
-    return this.createDivWithClassName('cell__content_hidden');
+    return this.createDivWithClassName('cell__content');
   }
 
   createDivWithClassName(className) {
@@ -118,16 +83,16 @@ export default class Field {
     return div;
   }
 
+  appendRowToField(row) {
+    this.fieldElement.append(row);
+  }
+
   appendRowToFieldArray() {
     this.fieldArr.push([]);
   }
 
-  appendCellToFieldArray(cell, row) {
-    this.fieldArr[row].push(cell);
-  }
-
-  appendRowToField(row) {
-    this.fieldElement.append(row);
+  appendCellToFieldArray(cellElement, row) {
+    this.fieldArr[row].push(new Cell(cellElement));
   }
 
   appendCellToRow(cell, row) {
@@ -142,9 +107,10 @@ export default class Field {
     while (counter < this.mineCount) {
       const row = Math.floor(Math.random() * this.rowCount);
       const column = Math.floor(Math.random() * this.columnCount);
+      const cell = this.fieldArr[row][column];
 
-      if (!this.fieldArr[row][column].dataset.content) {
-        this.fieldArr[row][column].dataset.content = 'mine';
+      if (!cell.isMine) {
+        cell.isMine = true;
         counter++;
       }
     }
@@ -155,15 +121,15 @@ export default class Field {
   fillFieldWithNumbers() {
     for (let row = 0; row < this.rowCount; row++) {
       for (let column = 0; column < this.columnCount; column++) {
-        if (this.fieldArr[row][column].dataset.content === 'mine') {
+        const cell = this.fieldArr[row][column];
+
+        if (cell.isMine) {
           continue;
         }
         const countOfMine = this.getCountOfMine(row, column);
 
         if (countOfMine) {
-          this.fieldArr[row][column].dataset.content = countOfMine;
-          this.renderCountOfMine(row, column, countOfMine); // temporary method
-          // this.field[row][column].open();
+          cell.content = countOfMine;
         }
       }
     }
@@ -176,7 +142,7 @@ export default class Field {
         if ((y === row && x === column) || !this.isValidRowColumn(y, x)) {
           continue;
         }
-        if (this.fieldArr[y][x].dataset.content === 'mine') {
+        if (this.fieldArr[y][x].isMine) {
           counter++;
         }
       }
@@ -194,10 +160,6 @@ export default class Field {
   // Метод открывает область пустых ячеек
 
   openFreeSpaces(row, column) {
-    // if (this.field[row][column].content) {
-    //   this.field[row][column].open();
-    //   return null;
-    // }
     for (let y = row - 1; y < row + 2; y++) {
       for (let x = column - 1; x < column + 2; x++) {
         if ((y === row && x === column) || !this.isValidRowColumn(y, x)) {
@@ -223,24 +185,4 @@ export default class Field {
   }
 
   // Test methods !!!
-  renderMine() {
-    for (const row of this.fieldArr) {
-      row.map(cell => {
-        if (cell.dataset.content === 'mine') {
-          const mineElement = cell.firstChild;
-
-          mineElement.textContent = 'X';
-          mineElement.classList.add('cell__content_hidden');
-        }
-      });
-    }
-  }
-
-  renderCountOfMine(row, column, count) {
-    const contentElement = this.fieldArr[row][column].firstChild;
-
-    contentElement.textContent = count;
-    contentElement.classList.add(`cell__content_${count}`);
-    contentElement.classList.add('cell__content_hidden');
-  }
 }

@@ -1,40 +1,47 @@
 export default class Cell {
-  constructor(element, row, column) {
-    this.element = element;
-    this.row = row;
-    this.column = column;
+  constructor(element) {
+    // this.cellElement = element;
+    this.contentElement = element.firstChild;
+    // this.row = row;
+    // this.column = column;
     this.isOpen = false;
-    this.mine = false;
-    this.content = '';
+    this.isMine = false;
   }
 
-  static open(element) {
-    if (element.matches('.cell_open')) {
-      return;
-    }
-
-    const { content } = element.dataset;
-
-    element.classList.add('cell_open');
-    element.firstChild.classList.remove('cell__content_hidden');
-
-    if (content === 'mine') {
-      element.innerHTML = '<div>X</div>';
-      return;
-    }
-
-    // if (!content) {
-    //   element.innerHTML = '<div></div>';
-    //   return;
-    // }
-
-    // element.innerHTML = `<div class="cell__content_${content}">${content}</div>`;
+  get content() {
+    return this._content;
   }
 
-  setMineFlag() {
-    if (this.isOpen) {
-      return;
+  set content(value) {
+    this._content = value;
+    this.contentElement.innerText = value;
+    this.contentElement.classList.add(`cell__content_${value}`);
+  }
+
+  get isMine() {
+    return this._isMine;
+  }
+
+  set isMine(value) {
+    if (value) {
+      const img = document.createElement('img');
+
+      img.className = 'cell__mine';
+      img.src = './src/svg/mine.svg';
+      this.contentElement.append(img);
     }
-    this.element.innerHTML = '<div>Q</div>';
+    this._isMine = value;
+  }
+
+  get isOpen() {
+    return this._isOpen;
+  }
+
+  set isOpen(value) {
+    if (value) {
+      this.contentElement.classList.remove('cell__content_hidden');
+    } else {
+      this.contentElement.classList.add('cell__content_hidden');
+    }
   }
 }

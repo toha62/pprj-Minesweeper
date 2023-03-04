@@ -1,7 +1,15 @@
 export default class MouseClickHandler {
-  constructor(element, leftClickCallback, rightClickCallback, bothClickDownCallback, bothClickUpCallback) {
+  constructor(
+    element,
+    leftClickDownCallback,
+    leftClickUpCallback,
+    rightClickCallback,
+    bothClickDownCallback,
+    bothClickUpCallback,
+  ) {
     this.element = element;
-    this.leftClickCallback = leftClickCallback;
+    this.leftClickDownCallback = leftClickDownCallback;
+    this.leftClickUpCallback = leftClickUpCallback;
     this.rightClickCallback = rightClickCallback;
     this.bothClickDownCallback = bothClickDownCallback;
     this.bothClickUpCallback = bothClickUpCallback;
@@ -18,6 +26,8 @@ export default class MouseClickHandler {
 
       if (this.pressedButtons.includes(0) && this.pressedButtons.includes(2)) {
         this.bothClickDownCallback(event.target);
+      } else if (this.pressedButtons.includes(0)) {
+        this.leftClickDownCallback(event.target);
       }
     });
 
@@ -28,7 +38,7 @@ export default class MouseClickHandler {
         this.bothClickUpCallback(event.target);
         this.pressedButtons.length = 0;
       } else if (this.pressedButtons.includes(0)) {
-        this.leftClickCallback(event.target);
+        this.leftClickUpCallback(event.target);
       } else if (this.pressedButtons.includes(2)) {
         this.rightClickCallback(event.target);
       }
